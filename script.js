@@ -380,23 +380,37 @@ function initMobileOptimizations() {
         document.body.classList.add('touch-device');
     }
 
-    // 优化移动端导航
+    // 优化移动端导航 - 使用节流函数防止频繁触发
     let lastScrollY = window.scrollY;
+    let ticking = false;
     const nav = document.querySelector('.nav');
     
-    window.addEventListener('scroll', function() {
+    function updateNavVisibility() {
         const currentScrollY = window.scrollY;
         
-        if (currentScrollY > lastScrollY && currentScrollY > 100) {
-            // 向下滚动时隐藏导航
-            nav.style.transform = 'translateY(-100%)';
-        } else {
-            // 向上滚动时显示导航
-            nav.style.transform = 'translateY(0)';
+        // 增加一个最小滚动距离阈值，避免小幅滚动造成跳动
+        if (Math.abs(currentScrollY - lastScrollY) > 5) {
+            if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                // 向下滚动时隐藏导航
+                nav.style.transform = 'translateY(-100%)';
+            } else if (currentScrollY < lastScrollY) {
+                // 向上滚动时显示导航
+                nav.style.transform = 'translateY(0)';
+            }
+            lastScrollY = currentScrollY;
         }
         
-        lastScrollY = currentScrollY;
-    }, { passive: true });
+        ticking = false;
+    }
+    
+    function onScroll() {
+        if (!ticking) {
+            requestAnimationFrame(updateNavVisibility);
+            ticking = true;
+        }
+    }
+    
+    window.addEventListener('scroll', onScroll, { passive: true });
 }
 
 // 平滑滚动到指定元素

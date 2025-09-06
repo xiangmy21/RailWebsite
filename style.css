@@ -43,6 +43,8 @@
 
 html {
     scroll-behavior: smooth;
+    /* 确保滚动过程中的稳定性 */
+    scroll-padding-top: 80px;
 }
 
 body {
@@ -51,6 +53,8 @@ body {
     color: var(--text-primary);
     background-color: var(--bg-secondary);
     font-size: 16px;
+    /* 防止滚动时的布局跳动 */
+    overflow-x: hidden;
 }
 
 .container {
@@ -144,6 +148,9 @@ body {
     top: 0;
     z-index: 100;
     backdrop-filter: blur(10px);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(0);
+    will-change: transform;
 }
 
 .nav-tabs {
@@ -201,13 +208,16 @@ body {
 .main {
     min-height: 70vh;
     padding: 3rem 0;
+    position: relative;
+    z-index: 1;
 }
 
 .section {
     display: none;
     opacity: 0;
     transform: translateY(20px);
-    transition: var(--transition);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity, transform;
 }
 
 .section.active {
